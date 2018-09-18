@@ -157,10 +157,9 @@ public class DifferentialEvolution implements ContestSubmission
 
 
 
-    public void run(){
-
-    }
-
+    
+    
+    
     // MAIN FUNCTION
 	public void run(String[] args)
 	{
@@ -174,10 +173,14 @@ public class DifferentialEvolution implements ContestSubmission
             // Apply crossover / mutation operators
             double child[] = {0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
             // Check fitness of unknown fuction
-            Double fitness = (double) evaluation_.evaluate(child);
+            Double fitness = (Double) evaluation_.evaluate(child);
             evals++;
             // Select survivors
         }
 
 	}
+	
+	public void main(String[] argv){
+    	run(argv);
+    }
 }
