@@ -36,6 +36,9 @@ public class player26 implements ContestSubmission
         boolean hasStructure = Boolean.parseBoolean(props.getProperty("Regular"));
         boolean isSeparable = Boolean.parseBoolean(props.getProperty("Separable"));
 
+        String eval_type = props.getProperty("Evaluation");
+
+        System.out.println(eval_type);
 		// Do sth with property values, e.g. specify relevant settings of your algorithm
         if(isMultimodal){
             // Do sth
