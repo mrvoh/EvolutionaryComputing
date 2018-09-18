@@ -101,14 +101,14 @@ public class DifferentialEvolution implements ContestSubmission
         return fitness;
     }
 
-    private double[] eval_pop(double[][] pop){
+    private double[] eval_pop(double[][] pop){ //Ronald
         // function to evaluate each phenotype in a population
 
         double[] dummy = new double[POP_SIZE];
         return  dummy;
     }
 
-    private double[][] get_mutant_vector(double[][] pop){
+    private double[][] get_mutant_vector(double[][] pop){ // Efi
         // function to create a new mutant population based on pop
         // result dims should be [POP_SIZE][PHENOTYPE_DIM]
 
@@ -121,7 +121,7 @@ public class DifferentialEvolution implements ContestSubmission
         return dummy;
     }
 
-    private double[][] get_trial_vector(double[][] pop, double[][] mutants){
+    private double[][] get_trial_vector(double[][] pop, double[][] mutants){ // Hans
         // function to create the trial vector T
 
         // apply crossover based on CROSSOVER_SCHEME
@@ -132,14 +132,14 @@ public class DifferentialEvolution implements ContestSubmission
         return dummy;
     }
 
-    private double[] crossover(double[] parent1, double[] parent2){
+    private double[] crossover(double[] parent1, double[] parent2){ // Ronald
         // function to perform crossover between two parents, return new child
 
         double[] dummy = new double[PHENOTYPE_DIM];
         return dummy;
     }
 
-    private List<Object> survival_selection(double[][] parents, double[] parents_fitness, double[][] children){
+    private List<Object> survival_selection(double[][] parents, double[] parents_fitness, double[][] children){ // Niels
         // function to select new surivors based on fitness
 
         // evaluate children
