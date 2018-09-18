@@ -4,6 +4,8 @@ import org.vu.contest.ContestEvaluation;
 import java.util.Random;
 import java.util.Properties;
 import java.util.*;
+import java.io.File;
+import java.io.IOException;
 
 public class DifferentialEvolution implements ContestSubmission
 {
@@ -51,10 +53,15 @@ public class DifferentialEvolution implements ContestSubmission
         }
     }
 
+
     // MAIN ALGORITH PARAMETERS
+
+    // Static for assignment
     public int PHENOTYPE_DIM = 10; // each phenotype has 10 dimensions in our assignment
     public int DIM_LOWER_BOUND = -5; // each dimension ranges from [-5, 5]
     public int DIM_UPPER_BOUND = 5;
+
+    // Changeable params
     public int POP_SIZE = 100; // mu
     public double SCALING_FACTOR = 0.5; //F
     public double CROSSOVER_PROB = 0.5; // Cr
@@ -64,8 +71,6 @@ public class DifferentialEvolution implements ContestSubmission
     public int NR_PERTURBATION_VECTORS = 1;
     public String BASE_VECTOR = "random";
     public String CROSSOVER_SCHEME = "bin";
-
-
 
 
     // HELPER FUNCTIONS FOR MAIN
@@ -141,11 +146,9 @@ public class DifferentialEvolution implements ContestSubmission
 
         // compare each parent to child and save fittest in new population
 
-
+        // return list of objects, to be converted back outside function
         double[][] survivors = new double[POP_SIZE][PHENOTYPE_DIM];
         double[] survivor_fitness = new double[POP_SIZE];
-
-
         return Arrays.asList(survivors, survivor_fitness);
 
     }
@@ -154,14 +157,15 @@ public class DifferentialEvolution implements ContestSubmission
 
 
 
+    public void run(){
 
+    }
 
     // MAIN FUNCTION
-    
-	public void run()
+	public void run(String[] args)
 	{
-		// Run your algorithm here
         
+
         int evals = 0;
         // init population
         // calculate fitness
