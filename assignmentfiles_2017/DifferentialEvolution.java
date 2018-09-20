@@ -85,7 +85,7 @@ public class DifferentialEvolution implements ContestSubmission
 
             for(int j = 0; j < phenotype_dim; j++){
                 // initialize values randomly
-                pheno[j] = rnd_.nextDouble();
+                pheno[j] = DIM_LOWER_BOUND + (DIM_UPPER_BOUND - DIM_LOWER_BOUND) * rnd_.nextDouble();
                 }
             
             pop[i] = pheno;
