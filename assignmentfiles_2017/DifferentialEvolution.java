@@ -140,17 +140,23 @@ public class DifferentialEvolution implements ContestSubmission
     }
 
     private List<Object> survival_selection(double[][] parents, double[] parents_fitness, double[][] children){ // Niels
-        // function to select new surivors based on fitness
-
-        // evaluate children
-
-        // compare each parent to child and save fittest in new population
-
-        // return list of objects, to be converted back outside function
+         // function to select new surivors based on fitness
         double[][] survivors = new double[POP_SIZE][PHENOTYPE_DIM];
         double[] survivor_fitness = new double[POP_SIZE];
+        // evaluate children
+        double[] child_fitness = eval_pop(children);
+        // compare each parent to child and save fittest in new population
+        for(int i = 0; i < parents_fitness.length; i++){
+            if(parents_fitness[i] > child_fitness[i]){
+                survivors[i] = parents[i].clone();
+                survivor_fitness[i] = parents_fitness[i];
+            }else{
+                survivors[i] = children[i].clone();
+                survivor_fitness[i] = child_fitness[i];
+            }
+        }
+        // return list of objects, to be converted back outside function
         return Arrays.asList(survivors, survivor_fitness);
-
     }
 
 
@@ -161,7 +167,7 @@ public class DifferentialEvolution implements ContestSubmission
     
     
     // MAIN FUNCTION
-	public void run(String[] args)
+	public void run()
 	{
         
 
@@ -176,11 +182,15 @@ public class DifferentialEvolution implements ContestSubmission
             Double fitness = (Double) evaluation_.evaluate(child);
             evals++;
             // Select survivors
+            // EXAMPLE USAGE OF survival_selection()
+            // List res = survival_selection(pop, fitness, pop);
+            // double[][] survivors = (double[][])res.get(0);
+            // double[] surv_fitness = (double[])res.get(1);
         }
 
 	}
 	
 	public void main(String[] argv){
-    	run(argv);
+    	run();
     }
 }
