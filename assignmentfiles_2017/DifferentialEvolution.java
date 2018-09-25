@@ -65,7 +65,6 @@ public class DifferentialEvolution implements ContestSubmission
     public int POP_SIZE = 100; // mu
     public double SCALING_FACTOR = 0.5; //F
     public double CROSSOVER_PROB = 0.5; // Cr
-    public double CROSSOVER_RATE = 0.1; // Pc
 
     // Params for DE operators (different versions of algorithm)
     public int NR_PERTURBATION_VECTORS = 1;
@@ -101,11 +100,15 @@ public class DifferentialEvolution implements ContestSubmission
         return fitness;
     }
 
-    private double[] eval_pop(double[][] pop){ //Ronald
+    private double[] eval_pop(double[][] pop){
         // function to evaluate each phenotype in a population
+    	double[] fitness_values = new double[POP_SIZE];
+    	
+    	for (int i = 0; i < pop.length; i++) {
+    		fitness_values[i] = (double) evaluation_.evaluate(pop[i]);
+		}
 
-        double[] dummy = new double[POP_SIZE];
-        return  dummy;
+        return fitness_values;
     }
 
     private double[][] get_mutant_vector(double[][] pop){ // Efi
@@ -156,24 +159,26 @@ public class DifferentialEvolution implements ContestSubmission
         // return T
 	    double[][] T = new double[POP_SIZE][PHENOTYPE_DIM];
 	    for(int i = 0; i < POP_SIZE; i++) {
-	    	int rnbr = rnd_.nextInt(POP_SIZE);
-	    	for(int j = 0; j < PHENOTYPE_DIM; j++) {
-	    		double randb = rnd_.nextDouble();
-	    		if(randb < CROSSOVER_RATE || j == rnbr) {
-	    			T[i][j] = mutants[i][j];
-	    		} else {
-	    			T[i][j] = pop[i][j];
-	    		}
-	    	}
+            T[i] = crossover(pop[i], mutants[i]);
 	    }
+
 	    return T;
     }
 
-    private double[] crossover(double[] parent1, double[] parent2){ // Ronald
+    private double[] crossover(double[] parent1, double[] parent2){
         // function to perform crossover between two parents, return new child
-
-        double[] dummy = new double[PHENOTYPE_DIM];
-        return dummy;
+    	double[] child = new double[PHENOTYPE_DIM];
+    	int R = rnd_.nextInt(PHENOTYPE_DIM); //index on which at least crossover is applied
+    	
+    	for (int i = 0; i < PHENOTYPE_DIM; i++) {
+    		double r_i = rnd_.nextDouble();
+    		if(r_i < CROSSOVER_PROB || i == R){
+    			child[i] = parent2[i];
+    		}else{
+    			child[i] = parent1[i];
+    		}
+        }
+        return child;
     }
 
     private List<Object> survival_selection(double[][] parents, double[] parents_fitness, double[][] children){ // Niels
