@@ -112,13 +112,42 @@ public class DifferentialEvolution implements ContestSubmission
         // function to create a new mutant population based on pop
         // result dims should be [POP_SIZE][PHENOTYPE_DIM]
 
+        // create placeholder for population
+        double[][] mutants = new double[POP_SIZE][PHENOTYPE_DIM];
+
+        // pick 3 invividuals from the population  P[i1],P[i2],P[i3]
+        // where i1!= i2 != i3
+        int a,b,c;
+
+        for(int j = 0; j < POP_SIZE; j++){
+            
+            a = rnd_.nextInt(POP_SIZE);
+            
+            do{
+                b = rnd_.nextInt(POP_SIZE);
+            }while(b==a);
+            do{
+                c = rnd_.nextInt(POP_SIZE);
+            }while(c == a || c == b);
+
+            // create three agent individuals
+            double[] individual1 = pop[a];
+            double[] individual2 = pop[b];
+            double[] individual3 = pop[c];
+
+            // mutation process
+            // create difference vector based on NR_PERTURBATION_VECTORS
+
+            for(int n = 0; n < PHENOTYPE_DIM; n++){
+                mutants[j][n] = (individual1[n] + SCALING_FACTOR
+                        * (individual2[n] - individual3[n]));
+            }
+        }
+
         // Sample base vector based on BASE_VECTOR 
-
-        // create difference vector based on NR_PERTURBATION_VECTORS
-
-        // create final population
-        double[][] dummy = new double[POP_SIZE][PHENOTYPE_DIM];
-        return dummy;
+        
+        
+        return mutants;
     }
 
     private double[][] get_trial_vector(double[][] pop, double[][] mutants){ // Hans
