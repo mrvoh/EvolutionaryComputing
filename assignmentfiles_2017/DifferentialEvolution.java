@@ -122,14 +122,22 @@ public class DifferentialEvolution implements ContestSubmission
     }
 
     private double[][] get_trial_vector(double[][] pop, double[][] mutants){ // Hans
-        // function to create the trial vector T
-
+        // function to create the trial vectors T
         // apply crossover based on CROSSOVER_SCHEME
-
-
         // return T
-        double[][] dummy = new double[POP_SIZE][PHENOTYPE_DIM];
-        return dummy;
+	    double[][] T = new double[POP_SIZE][PHENOTYPE_DIM];
+	    for(int i = 0; i < POP_SIZE; i++) {
+	    	int rnbr = rnd_.nextInt(POP_SIZE);
+	    	for(int j = 0; j < PHENOTYPE_DIM; j++) {
+	    		double randb = rnd_.nextDouble();
+	    		if(randb < CROSSOVER_RATE || j == rnbr) {
+	    			T[i][j] = mutants[i][j];
+	    		} else {
+	    			T[i][j] = pop[i][j];
+	    		}
+	    	}
+	    }
+	    return T;
     }
 
     private double[] crossover(double[] parent1, double[] parent2){ // Ronald
