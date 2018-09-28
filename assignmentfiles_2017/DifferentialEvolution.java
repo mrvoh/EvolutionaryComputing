@@ -62,14 +62,14 @@ public class DifferentialEvolution implements ContestSubmission
     public int DIM_UPPER_BOUND = 5;
 
     // Changeable params
-    public int POP_SIZE = 100; // mu
-    public double SCALING_FACTOR = 0.5; //F
-    public double CROSSOVER_PROB = 0.5; // Cr
+	public int POP_SIZE = 175;
+	public double SCALING_FACTOR = 0.5444439844919402;
+	public double CROSSOVER_PROB = 0.2928264688501935;
 
     // Params for DE operators (different versions of algorithm)
-    public int NR_PERTURBATION_VECTORS = 1;
-    public String BASE_VECTOR = "random";
-    public String CROSSOVER_SCHEME = "bin";
+	public int NR_PERTURBATION_VECTORS = 3;
+	public String BASE_VECTOR = "rand";
+	public String CROSSOVER_SCHEME = "exp";
 
 
     // HELPER FUNCTIONS FOR MAIN
