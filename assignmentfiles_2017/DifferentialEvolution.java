@@ -1,8 +1,6 @@
 import org.vu.contest.ContestSubmission;
 import org.vu.contest.ContestEvaluation;
 
-import java.util.Random;
-import java.util.Properties;
 import java.util.*;
 import java.io.File;
 import java.io.IOException;
@@ -53,7 +51,6 @@ public class DifferentialEvolution implements ContestSubmission
         }
     }
 
-
     // MAIN ALGORITH PARAMETERS
 
     // Static for assignment
@@ -86,20 +83,11 @@ public class DifferentialEvolution implements ContestSubmission
                 // initialize values randomly
                 pheno[j] = DIM_LOWER_BOUND + (DIM_UPPER_BOUND - DIM_LOWER_BOUND) * rnd_.nextDouble();
                 }
-            
             pop[i] = pheno;
-
         }
-
         return pop;
     }
-    private double[] init_fitness_scores(int pop_size){
-        // function to initialize an array of fitnesses with only zeros
-
-        double[] fitness = new double[pop_size];// java initializes an array with zeros
-        return fitness;
-    }
-
+    
     private double[] eval_pop(double[][] pop){
         // function to evaluate each phenotype in a population
     	double[] fitness_values = new double[POP_SIZE];
@@ -123,7 +111,6 @@ public class DifferentialEvolution implements ContestSubmission
         int a,b,c;
 
         for(int j = 0; j < POP_SIZE; j++){
-            
             a = rnd_.nextInt(POP_SIZE);
             
             do{
@@ -146,10 +133,7 @@ public class DifferentialEvolution implements ContestSubmission
                         * (individual2[n] - individual3[n]));
             }
         }
-
         // Sample base vector based on BASE_VECTOR 
-        
-        
         return mutants;
     }
 
@@ -181,7 +165,7 @@ public class DifferentialEvolution implements ContestSubmission
         return child;
     }
 
-    private List<Object> survival_selection(double[][] parents, double[] parents_fitness, double[][] children){ // Niels
+    private List<? extends Object> survival_selection(double[][] parents, double[] parents_fitness, double[][] children){ // Niels
          // function to select new surivors based on fitness
         double[][] survivors = new double[POP_SIZE][PHENOTYPE_DIM];
         double[] survivor_fitness = new double[POP_SIZE];
@@ -201,35 +185,25 @@ public class DifferentialEvolution implements ContestSubmission
         return Arrays.asList(survivors, survivor_fitness);
     }
 
-
-
-
-
-    
-    
-    
     // MAIN FUNCTION
 	public void run()
 	{
-        
-
         int evals = 0;
         // init population
+        double[][] pop = init_population(POP_SIZE, PHENOTYPE_DIM);
         // calculate fitness
+        double[] fitness_scores = eval_pop(pop);
         while(evals<evaluations_limit_){
-            // Select parents
+        	 // Select parents
             // Apply crossover / mutation operators
-            double child[] = {0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
-            // Check fitness of unknown fuction
-            Double fitness = (Double) evaluation_.evaluate(child);
-            evals++;
-            // Select survivors
-            // EXAMPLE USAGE OF survival_selection()
-            // List res = survival_selection(pop, fitness, pop);
-            // double[][] survivors = (double[][])res.get(0);
-            // double[] surv_fitness = (double[])res.get(1);
+        	double[][] mutant_pop =  get_mutant_vector(pop);
+        	double[][] trial_pop = get_trial_vector(pop, mutant_pop);
+        	// Selection
+        	List res = survival_selection(pop, fitness_scores, trial_pop);
+        	pop = (double[][])res.get(0);
+        	fitness_scores = (double[])res.get(1);
+        	evals++;
         }
-
 	}
 	
 	public void main(String[] argv){
