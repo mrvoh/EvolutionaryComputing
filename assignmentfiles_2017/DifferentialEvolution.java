@@ -99,6 +99,49 @@ public class DifferentialEvolution implements ContestSubmission
         return fitness_values;
     }
 
+
+    //Get the fittest individual
+   public double getFittest(double[] fitness_values) {
+       double maxFit = Double.MIN_VALUE;
+       int maxFitIndex = 0;
+       for (int i = 0; i < POP_SIZE; i++) {
+           if (maxFit <= fitness_values[i]) {
+               maxFit = fitness_values[i];
+               maxFitIndex = i;
+           }
+       }
+       return maxFit;
+   }
+
+   //Get least fit individual
+   public double getLeastFittest(double[] fitness_values) {
+       double minFitVal = Double.MAX_VALUE;
+       int minFitIndex = 0;
+       for (int i = 0; i < POP_SIZE; i++) {
+           if (minFitVal >= fitness_values[i]) {
+               minFitVal = fitness_values[i];
+               minFitIndex = i;
+           }
+
+       }
+       return minFitVal;
+   }
+
+   // Diversity
+   public double getDiversity(double[] fitness_values){
+       double diversity;
+       double fittest;
+       double least_fittest;
+
+       // For now: max fitness -  min fitness
+       fittest = getFittest(fitness_values);
+       least_fittest = getLeastFittest(fitness_values);
+       diversity = fittest-least_fittest;
+       return diversity;
+
+   }
+
+
     private double[][] get_mutant_vector(double[][] pop){ // Efi
         // function to create a new mutant population based on pop
         // result dims should be [POP_SIZE][PHENOTYPE_DIM]
@@ -191,6 +234,7 @@ public class DifferentialEvolution implements ContestSubmission
         int evals = 20;
         // init population
         double[][] pop = init_population(POP_SIZE, PHENOTYPE_DIM);
+        double diversity;
         // calculate fitness
         double[] fitness_scores = eval_pop(pop);
         while(evals<evaluations_limit_){
@@ -199,6 +243,9 @@ public class DifferentialEvolution implements ContestSubmission
             for (int i = 0; i < PHENOTYPE_DIM; i++) {
                 SCALING_FACTOR[i] = SCALING_FACTOR[i]*0.999;
             }
+
+            diversity = getDiversity(fitness_scores);
+            System.out.println(String.valueOf(diversity));
             // Select parents
             // Apply crossover / mutation operators
         	double[][] mutant_pop =  get_mutant_vector(pop);
