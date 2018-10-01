@@ -60,8 +60,8 @@ public class DifferentialEvolution implements ContestSubmission
 
     // Changeable params
 	public int POP_SIZE = 175;
-	public double SCALING_FACTOR = 0.5444439844919402;
-	public double CROSSOVER_PROB = 0.2928264688501935;
+    public double[] SCALING_FACTOR = {0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.3};
+    public double CROSSOVER_PROB = 0.2928264688501935;
 
     // Params for DE operators (different versions of algorithm)
 	public int NR_PERTURBATION_VECTORS = 3;
@@ -129,7 +129,7 @@ public class DifferentialEvolution implements ContestSubmission
             // create difference vector based on NR_PERTURBATION_VECTORS
 
             for(int n = 0; n < PHENOTYPE_DIM; n++){
-                mutants[j][n] = (individual1[n] + SCALING_FACTOR
+                mutants[j][n] = (individual1[n] + SCALING_FACTOR[n]
                         * (individual2[n] - individual3[n]));
             }
         }
@@ -188,13 +188,18 @@ public class DifferentialEvolution implements ContestSubmission
     // MAIN FUNCTION
 	public void run()
 	{
-        int evals = 0;
+        int evals = 20;
         // init population
         double[][] pop = init_population(POP_SIZE, PHENOTYPE_DIM);
         // calculate fitness
         double[] fitness_scores = eval_pop(pop);
         while(evals<evaluations_limit_){
-        	 // Select parents
+
+            //decreasing scaling factor
+            for (int i = 0; i < PHENOTYPE_DIM; i++) {
+                SCALING_FACTOR[i] = SCALING_FACTOR[i]*0.999;
+            }
+            // Select parents
             // Apply crossover / mutation operators
         	double[][] mutant_pop =  get_mutant_vector(pop);
         	double[][] trial_pop = get_trial_vector(pop, mutant_pop);
@@ -203,6 +208,7 @@ public class DifferentialEvolution implements ContestSubmission
         	pop = (double[][])res.get(0);
         	fitness_scores = (double[])res.get(1);
         	evals++;
+
         }
 	}
 	
