@@ -61,7 +61,7 @@ public class DifferentialEvolution implements ContestSubmission
 
     // Changeable params
 	public int POP_SIZE = 100;
-    public double[] SCALING_FACTOR = {0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5};
+    //public double[] SCALING_FACTOR = {0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5};
 	public double CROSSOVER_PROB = 0.22293177356457405;
 
     // Params for DE operators (different versions of algorithm)
@@ -173,7 +173,7 @@ public class DifferentialEvolution implements ContestSubmission
             double[] fitness_scores = eval_pop(pop);
             //System.out.println(Math.abs(fitness_scores[b]));
 
-            double NF = new_mutation_factor(fitness_scores[b], fitness_scores[c])/3;
+            double NF = new_mutation_factor(fitness_scores[b], fitness_scores[c]);
             System.out.println(NF);
 
             // mutation process
@@ -253,11 +253,6 @@ public class DifferentialEvolution implements ContestSubmission
         // calculate fitness
         double[] fitness_scores = eval_pop(pop);
         while(evals<evaluations_limit_){
-
-            //decreasing scaling factor
-            for (int i = 0; i < PHENOTYPE_DIM; i++) {
-                SCALING_FACTOR[i] = SCALING_FACTOR[i]*0.999;
-            }
 
             diversity = getDiversity(fitness_scores);
             //System.out.println(String.valueOf(diversity));
