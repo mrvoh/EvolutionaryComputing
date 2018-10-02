@@ -148,12 +148,9 @@ public class DifferentialEvolution implements ContestSubmission
 
         // create placeholder for population
         double[][] mutants = new double[POP_SIZE][PHENOTYPE_DIM];
-
-        // pick 3 invividuals from the population  P[i1],P[i2],P[i3]
-        // where i1!= i2 != i3
-        int a,b,c;
-
+  
         for(int j = 0; j < POP_SIZE; j++){
+<<<<<<< Updated upstream
             a = rnd_.nextInt(POP_SIZE);
             
             do{
@@ -175,6 +172,36 @@ public class DifferentialEvolution implements ContestSubmission
                 mutants[j][n] = (individual1[n] + SCALING_FACTOR[n]
                         * (individual2[n] - individual3[n]));
             }
+=======
+	        int indexIndividual1 = rnd_.nextInt(POP_SIZE);
+	        double[] individual1 = pop[indexIndividual1];
+	        
+	        Set<Integer> candidates = new HashSet<Integer>();
+	        for(int i = 0; i < (2*NR_PERTURBATION_VECTORS); i++) {
+	        	int setLength = candidates.size();
+	        	do{
+	                int randomCandidateIndex = rnd_.nextInt(POP_SIZE);
+	                if(randomCandidateIndex != indexIndividual1){
+	                	candidates.add(randomCandidateIndex);
+	                }
+	            }while(candidates.size()==setLength);
+	        }
+	       
+	        List<Integer> randomCandidateList = new ArrayList<Integer>(candidates);
+			
+			double[] difference = pop[randomCandidateList.get(0)];
+	        for(int n = 0; n < PHENOTYPE_DIM; n++){
+	        	for(int i=1; i<randomCandidateList.size(); i++){
+	    			if(i < (randomCandidateList.size()/2)){
+	    				difference[n] += pop[randomCandidateList.get(i)][n];
+	    			}else{
+	    				difference[n] -= pop[randomCandidateList.get(i)][n];
+	    			}
+	    		}
+	            mutants[j][n] = (individual1[n] + SCALING_FACTOR
+	                    * difference[n]);
+	        }
+>>>>>>> Stashed changes
         }
         // Sample base vector based on BASE_VECTOR 
         return mutants;
