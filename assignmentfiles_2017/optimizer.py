@@ -35,7 +35,7 @@ class Optimizer:
         }
         # Set points on which to evaluate the model for exploration of the solution space
         self.explore_points = {
-            'pop_size' : [25, 100, 200], 
+            'pop_size' : [25, 100, 500], 
             'scaling_factor' : [0.5, 0.9, 0.1], 
             'crossover_prob' : [0.3, 0.05, 0.8],  
             'nr_perturbation_vectors' : [1,2,3], 
@@ -123,8 +123,7 @@ class Optimizer:
             # parse output
             out = str(out)
             out = out[out.find('Score:'):]
-            score += float(out.split('\\')[0][-4:])
-        
+            score += float(out.split('\\n')[0][7:])
 
         #with Capturing() as output:
         return score
@@ -190,7 +189,7 @@ class Optimizer:
         self.bo.points_to_csv(filepath)
 
 
-Opt = Optimizer('optimizer_results', 5, 5, 1, 3, 'DifferentialEvolution.java', 'SphereEvaluation')
+Opt = Optimizer('optimizer_results', 250, 25, 25, 5, 'RDE.java', 'SchaffersEvaluation')
 
 # Reinitialize from *.csv file in case of interruption. IMPORTANT: also disable line line "self.bo.explore(self.explore_points)"
 #Opt.init_csv('optimizer_results/0-intermediate.csv')

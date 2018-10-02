@@ -5,7 +5,7 @@ import java.util.*;
 import java.io.File;
 import java.io.IOException;
 
-public class DifferentialEvolution implements ContestSubmission
+public class RDE implements ContestSubmission
 {
 
     // PRE-PROGRAMMED STUFF
@@ -14,7 +14,7 @@ public class DifferentialEvolution implements ContestSubmission
 	ContestEvaluation evaluation_;
     private int evaluations_limit_;
 	
-	public DifferentialEvolution()
+	public RDE()
 	{
 		rnd_ = new Random();
 	}
@@ -59,13 +59,13 @@ public class DifferentialEvolution implements ContestSubmission
     public int DIM_UPPER_BOUND = 5;
 
     // Changeable params
-	public int POP_SIZE = 100;
-    public double[] SCALING_FACTOR = {0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.3};
-	public double CROSSOVER_PROB = 0.22293177356457405;
+	public int POP_SIZE = 29;
+	public double SCALING_FACTOR = 0.015165767714657719;
+	public double CROSSOVER_PROB = 0.23955957811705852;
 
     // Params for DE operators (different versions of algorithm)
-	public int NR_PERTURBATION_VECTORS = 2;
-	public String BASE_VECTOR = "rand";
+	public int NR_PERTURBATION_VECTORS = 3;
+	public String BASE_VECTOR = "best";
 	public String CROSSOVER_SCHEME = "exp";
 
 
@@ -172,7 +172,7 @@ public class DifferentialEvolution implements ContestSubmission
             // create difference vector based on NR_PERTURBATION_VECTORS
 
             for(int n = 0; n < PHENOTYPE_DIM; n++){
-                mutants[j][n] = (individual1[n] + SCALING_FACTOR[n]
+                mutants[j][n] = (individual1[n] + SCALING_FACTOR
                         * (individual2[n] - individual3[n]));
             }
         }
@@ -240,9 +240,9 @@ public class DifferentialEvolution implements ContestSubmission
         while(evals<evaluations_limit_){
 
             //decreasing scaling factor
-            for (int i = 0; i < PHENOTYPE_DIM; i++) {
-                SCALING_FACTOR[i] = SCALING_FACTOR[i]*0.999;
-            }
+            //for (int i = 0; i < PHENOTYPE_DIM; i++) {
+            //SCALING_FACTOR = SCALING_FACTOR[i]*0.999;
+            //}
 
             diversity = getDiversity(fitness_scores);
             //System.out.println(String.valueOf(diversity));
