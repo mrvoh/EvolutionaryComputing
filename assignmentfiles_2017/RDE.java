@@ -147,33 +147,53 @@ public class RDE implements ContestSubmission
         // result dims should be [POP_SIZE][PHENOTYPE_DIM]
 
         // create placeholder for population
-        double[][] mutants = new double[POP_SIZE][PHENOTYPE_DIM];
-
-        // pick 3 invividuals from the population  P[i1],P[i2],P[i3]
-        // where i1!= i2 != i3
-        int a,b,c;
-
+    	double[][] mutants = new double[POP_SIZE][PHENOTYPE_DIM];
+    	  
         for(int j = 0; j < POP_SIZE; j++){
-            a = rnd_.nextInt(POP_SIZE);
-            
-            do{
-                b = rnd_.nextInt(POP_SIZE);
-            }while(b==a);
-            do{
-                c = rnd_.nextInt(POP_SIZE);
-            }while(c == a || c == b);
+        	// Initialization of variables
+        	int indexIndividual1 = 0;
+        	double[] individual1 = pop[indexIndividual1];
+        	// Random base vectors
+        	if(BASE_VECTOR == "rand") {
+                indexIndividual1 = rnd_.nextInt(POP_SIZE);  
+    	        individual1 = pop[indexIndividual1];
+    	    // Best individual as base vector
+        	} else if(BASE_VECTOR == "best") {
+        		double[] fitness_values = eval_pop(pop);
+        		  int best = 0;
+        		  for (int i = 1; i < POP_SIZE; i++){
+        		      if ( fitness_values[i] > fitness_values[best] ) {
+        		    	  best = i;
+        		      }
+        		  }
+        		  indexIndividual1 = best;
+        		  individual1 = pop[indexIndividual1];
+        	}
+	        
+	        Set<Integer> candidates = new HashSet<Integer>();
+	        for(int i = 0; i < (2*NR_PERTURBATION_VECTORS); i++) {
+	        	int setLength = candidates.size();
+	        	do{
+	                int randomCandidateIndex = rnd_.nextInt(POP_SIZE);
+	                if(randomCandidateIndex != indexIndividual1){
+	                	candidates.add(randomCandidateIndex);
+	                }
+	            }while(candidates.size()==setLength);
+	        }
+	       
+	        List<Integer> randomCandidateList = new ArrayList<Integer>(candidates);
+			
+			double[] difference = pop[randomCandidateList.get(0)];
+	        for(int n = 0; n < PHENOTYPE_DIM; n++){
+	        	for(int i=1; i<randomCandidateList.size(); i++){
+	    			if(i < (randomCandidateList.size()/2)){
+	    				difference[n] += pop[randomCandidateList.get(i)][n];
+	    			}else{
+	    				difference[n] -= pop[randomCandidateList.get(i)][n];
+	    			}
+	    		}
+                mutants[j][n] = (individual1[n] + SCALING_FACTOR * difference[n]);
 
-            // create three agent individuals
-            double[] individual1 = pop[a];
-            double[] individual2 = pop[b];
-            double[] individual3 = pop[c];
-
-            // mutation process
-            // create difference vector based on NR_PERTURBATION_VECTORS
-
-            for(int n = 0; n < PHENOTYPE_DIM; n++){
-                mutants[j][n] = (individual1[n] + SCALING_FACTOR
-                        * (individual2[n] - individual3[n]));
             }
         }
         // Sample base vector based on BASE_VECTOR 
