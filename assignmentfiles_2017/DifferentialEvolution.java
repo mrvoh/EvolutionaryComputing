@@ -60,11 +60,11 @@ public class DifferentialEvolution implements ContestSubmission
 
     // Changeable params
 	public int POP_SIZE = 100;
-    public double[] SCALING_FACTOR = {0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.3};
+    public double[] SCALING_FACTOR = {0.9,0.9,0.9,0.9,0.9,0.9,0.9,0.9,0.9,0.9};
 	public double CROSSOVER_PROB = 0.22293177356457405;
 
     // Params for DE operators (different versions of algorithm)
-	public int NR_PERTURBATION_VECTORS = 2;
+	public int NR_PERTURBATION_VECTORS = 1;
 	public String BASE_VECTOR = "rand";
 	public String CROSSOVER_SCHEME = "exp";
 
@@ -163,6 +163,7 @@ public class DifferentialEvolution implements ContestSubmission
 	                }
 	            }while(candidates.size()==setLength);
 	        }
+            System.out.println(candidates.size());
 	       
 	        List<Integer> randomCandidateList = new ArrayList<Integer>(candidates);
 			
@@ -175,9 +176,10 @@ public class DifferentialEvolution implements ContestSubmission
 	    				difference[n] -= pop[randomCandidateList.get(i)][n];
 	    			}
 	    		}
-	            mutants[j][n] = (individual1[n] + SCALING_FACTOR
-	                    * difference[n]);
-	        }
+                mutants[j][n] = (individual1[n] + SCALING_FACTOR[n] * difference[n]);
+                System.out.println(mutants[j][n]);
+
+            }
         }
         // Sample base vector based on BASE_VECTOR 
         return mutants;
