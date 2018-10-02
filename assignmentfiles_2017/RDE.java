@@ -59,13 +59,13 @@ public class RDE implements ContestSubmission
     public int DIM_UPPER_BOUND = 5;
 
     // Changeable params
-	public int POP_SIZE = 29;
-	public double SCALING_FACTOR = 0.015165767714657719;
-	public double CROSSOVER_PROB = 0.23955957811705852;
+	public int POP_SIZE = 100;
+	public double SCALING_FACTOR = 0.9;
+	public double CROSSOVER_PROB = 0.05;
 
     // Params for DE operators (different versions of algorithm)
-	public int NR_PERTURBATION_VECTORS = 3;
-	public String BASE_VECTOR = "best";
+	public int NR_PERTURBATION_VECTORS = 2;
+	public String BASE_VECTOR = "rand";
 	public String CROSSOVER_SCHEME = "exp";
 
 
@@ -197,14 +197,26 @@ public class RDE implements ContestSubmission
     	double[] child = new double[PHENOTYPE_DIM];
     	int R = rnd_.nextInt(PHENOTYPE_DIM); //index on which at least crossover is applied
     	
-    	for (int i = 0; i < PHENOTYPE_DIM; i++) {
-    		double r_i = rnd_.nextDouble();
-    		if(r_i < CROSSOVER_PROB || i == R){
+    	if(CROSSOVER_SCHEME=="bin") {
+	    	for (int i = 0; i < PHENOTYPE_DIM; i++) {
+	    		double r_i = rnd_.nextDouble();
+	    		if(r_i < CROSSOVER_PROB || i == R){
+	    			child[i] = parent2[i];
+	    		}else{
+	    			child[i] = parent1[i];
+	    		}
+	        }
+    	} else if(CROSSOVER_SCHEME=="exp") {
+    		int i = 0;
+    		while(rnd_.nextDouble()<CROSSOVER_PROB && i < PHENOTYPE_DIM) {
     			child[i] = parent2[i];
-    		}else{
-    			child[i] = parent1[i];
+    			i++;
     		}
-        }
+    		for (int j = i; i < PHENOTYPE_DIM; i++) {
+    			child[j] = parent1[j];
+    		}
+    		child[R] = parent2[R];
+    	}
         return child;
     }
 

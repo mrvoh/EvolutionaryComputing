@@ -123,7 +123,7 @@ class Optimizer:
             # parse output
             out = str(out)
             out = out[out.find('Score:'):]
-            score += float(out.split('\\n')[0][7:])
+            score += float(out.split('\\r')[0][7:])
 
         #with Capturing() as output:
         return score
