@@ -150,30 +150,7 @@ public class DifferentialEvolution implements ContestSubmission
         double[][] mutants = new double[POP_SIZE][PHENOTYPE_DIM];
   
         for(int j = 0; j < POP_SIZE; j++){
-<<<<<<< Updated upstream
-            a = rnd_.nextInt(POP_SIZE);
-            
-            do{
-                b = rnd_.nextInt(POP_SIZE);
-            }while(b==a);
-            do{
-                c = rnd_.nextInt(POP_SIZE);
-            }while(c == a || c == b);
-
-            // create three agent individuals
-            double[] individual1 = pop[a];
-            double[] individual2 = pop[b];
-            double[] individual3 = pop[c];
-
-            // mutation process
-            // create difference vector based on NR_PERTURBATION_VECTORS
-
-            for(int n = 0; n < PHENOTYPE_DIM; n++){
-                mutants[j][n] = (individual1[n] + SCALING_FACTOR[n]
-                        * (individual2[n] - individual3[n]));
-            }
-=======
-	        int indexIndividual1 = rnd_.nextInt(POP_SIZE);
+            int indexIndividual1 = rnd_.nextInt(POP_SIZE);
 	        double[] individual1 = pop[indexIndividual1];
 	        
 	        Set<Integer> candidates = new HashSet<Integer>();
@@ -201,7 +178,6 @@ public class DifferentialEvolution implements ContestSubmission
 	            mutants[j][n] = (individual1[n] + SCALING_FACTOR
 	                    * difference[n]);
 	        }
->>>>>>> Stashed changes
         }
         // Sample base vector based on BASE_VECTOR 
         return mutants;
