@@ -42,7 +42,6 @@ public class RDE implements ContestSubmission
 
         String eval_type = props.getProperty("Evaluation");
 
-        System.out.println(eval_type);
 		// Do sth with property values, e.g. specify relevant settings of your algorithm
         if(isMultimodal){
             // Do sth
@@ -59,14 +58,14 @@ public class RDE implements ContestSubmission
     public int DIM_UPPER_BOUND = 5;
 
     // Changeable params
-	public int POP_SIZE = 100;
-	public double SCALING_FACTOR = 0.9;
-	public double CROSSOVER_PROB = 0.05;
+	public int POP_SIZE = 101;
+	public double SCALING_FACTOR = 0.466853463430979;
+	public double CROSSOVER_PROB = 0.7200923758272062;
 
     // Params for DE operators (different versions of algorithm)
 	public int NR_PERTURBATION_VECTORS = 2;
 	public String BASE_VECTOR = "rand";
-	public String CROSSOVER_SCHEME = "exp";
+	public String CROSSOVER_SCHEME = "bin";
 
 
     // HELPER FUNCTIONS FOR MAIN
@@ -142,34 +141,36 @@ public class RDE implements ContestSubmission
    }
 
 
-    private double[][] get_mutant_vector(double[][] pop){ // Efi
+    private double[][] get_mutant_vector(double[][] pop, double[] fitness_values){ // Efi
         // function to create a new mutant population based on pop
         // result dims should be [POP_SIZE][PHENOTYPE_DIM]
-
         // create placeholder for population
     	double[][] mutants = new double[POP_SIZE][PHENOTYPE_DIM];
-    	  
+        
+        // Only initialize best once
+        // Initialization of variables
+        int indexIndividual1 = 0;
+        double[] individual1 = pop[indexIndividual1];
+        if(BASE_VECTOR == "best") {
+        	int best = 0;
+        	for (int i = 1; i < POP_SIZE; i++){
+        	    if ( fitness_values[i] > fitness_values[best] ) {
+        	  	  best = i;
+        	    }
+        	}
+        	indexIndividual1 = best;
+        	individual1 = pop[indexIndividual1];
+        }
+
+    	// MAIN LOOP: create all mutants 
         for(int j = 0; j < POP_SIZE; j++){
-        	// Initialization of variables
-        	int indexIndividual1 = 0;
-        	double[] individual1 = pop[indexIndividual1];
+        	
         	// Random base vectors
         	if(BASE_VECTOR == "rand") {
                 indexIndividual1 = rnd_.nextInt(POP_SIZE);  
     	        individual1 = pop[indexIndividual1];
-    	    // Best individual as base vector
-        	} else if(BASE_VECTOR == "best") {
-        		double[] fitness_values = eval_pop(pop);
-        		  int best = 0;
-        		  for (int i = 1; i < POP_SIZE; i++){
-        		      if ( fitness_values[i] > fitness_values[best] ) {
-        		    	  best = i;
-        		      }
-        		  }
-        		  indexIndividual1 = best;
-        		  individual1 = pop[indexIndividual1];
-        	}
-	        
+            }
+	        // perturbation candidates
 	        Set<Integer> candidates = new HashSet<Integer>();
 	        for(int i = 0; i < (2*NR_PERTURBATION_VECTORS); i++) {
 	        	int setLength = candidates.size();
@@ -182,8 +183,7 @@ public class RDE implements ContestSubmission
 	        }
 	       
 	        List<Integer> randomCandidateList = new ArrayList<Integer>(candidates);
-			
-			double[] difference = pop[randomCandidateList.get(0)];
+			double[] difference = pop[randomCandidateList.get(0)].clone();
 	        for(int n = 0; n < PHENOTYPE_DIM; n++){
 	        	for(int i=1; i<randomCandidateList.size(); i++){
 	    			if(i < (randomCandidateList.size()/2)){
@@ -192,11 +192,11 @@ public class RDE implements ContestSubmission
 	    				difference[n] -= pop[randomCandidateList.get(i)][n];
 	    			}
 	    		}
-                mutants[j][n] = (individual1[n] + SCALING_FACTOR * difference[n]);
-
+                mutants[j][n] = Math.max(Math.min((individual1[n] + SCALING_FACTOR * difference[n]),5),-5);
             }
         }
         // Sample base vector based on BASE_VECTOR 
+
         return mutants;
     }
 
@@ -277,10 +277,9 @@ public class RDE implements ContestSubmission
             //}
 
             diversity = getDiversity(fitness_scores);
-            //System.out.println(String.valueOf(diversity));
             // Select parents
             // Apply crossover / mutation operators
-        	double[][] mutant_pop =  get_mutant_vector(pop);
+        	double[][] mutant_pop =  get_mutant_vector(pop, fitness_scores);
         	double[][] trial_pop = get_trial_vector(pop, mutant_pop);
         	// Selection
         	List res = survival_selection(pop, fitness_scores, trial_pop);

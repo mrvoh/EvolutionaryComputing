@@ -123,7 +123,8 @@ class Optimizer:
             # parse output
             out = str(out)
             out = out[out.find('Score:'):]
-            score += float(out.split('\\r')[0][7:])
+
+            score += float(out.split('\\n')[0][7:])
 
         #with Capturing() as output:
         return score
@@ -189,7 +190,7 @@ class Optimizer:
         self.bo.points_to_csv(filepath)
 
 
-Opt = Optimizer('optimizer_results', 250, 25, 25, 5, 'RDE.java', 'SchaffersEvaluation')
+Opt = Optimizer('optimizer_results', 250, 25, 25, 5, 'RDE.java', 'BentCigarFunction')
 
 # Reinitialize from *.csv file in case of interruption. IMPORTANT: also disable line line "self.bo.explore(self.explore_points)"
 #Opt.init_csv('optimizer_results/0-intermediate.csv')
