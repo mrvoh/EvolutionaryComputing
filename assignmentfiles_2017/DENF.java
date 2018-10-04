@@ -4,9 +4,8 @@ import org.vu.contest.ContestEvaluation;
 import java.util.*;
 import java.io.File;
 import java.io.IOException;
-import java.lang.*;
 
-public class DifferentialEvolution implements ContestSubmission
+public class DENF implements ContestSubmission
 {
 
     // PRE-PROGRAMMED STUFF
@@ -15,7 +14,7 @@ public class DifferentialEvolution implements ContestSubmission
 	ContestEvaluation evaluation_;
     private int evaluations_limit_;
 	
-	public DifferentialEvolution()
+	public DENF()
 	{
 		rnd_ = new Random();
 	}
@@ -43,7 +42,6 @@ public class DifferentialEvolution implements ContestSubmission
 
         String eval_type = props.getProperty("Evaluation");
 
-        System.out.println(eval_type);
 		// Do sth with property values, e.g. specify relevant settings of your algorithm
         if(isMultimodal){
             // Do sth
@@ -60,13 +58,13 @@ public class DifferentialEvolution implements ContestSubmission
     public int DIM_UPPER_BOUND = 5;
 
     // Changeable params
-	public int POP_SIZE = 100;
-    public double[] SCALING_FACTOR = 0.9;
-	public double CROSSOVER_PROB = 0.22293177356457405;
+	public int POP_SIZE = 143;
+	public double SCALING_FACTOR = 0.2099014640193858;
+	public double CROSSOVER_PROB = 0.7674425457585058;
 
     // Params for DE operators (different versions of algorithm)
 	public int NR_PERTURBATION_VECTORS = 2;
-	public String BASE_VECTOR = "rand";
+	public String BASE_VECTOR = "best";
 	public String CROSSOVER_SCHEME = "exp";
 
 
@@ -141,49 +139,92 @@ public class DifferentialEvolution implements ContestSubmission
        return diversity;
 
    }
+   private double new_mutation_factor(List<Integer> candidates, double[] fitness_values,int evals) {
+       // Function to calculate the self-adaptive scaling factor
+        if (evals + POP_SIZE <= (int)((double)evaluations_limit_*0.9)){
+            // use static scaling factor for first 90% of runs
+            return SCALING_FACTOR;
+        }else{ // compute NF in last 10% of runs
+
+            double group1 = 0;
+            double group2 = 0;
+
+            // compute scores for both sides of difference vector
+            int nr_candidates = candidates.size();
+            for(int i = 0; i < nr_candidates/2;i++){
+                group1 += fitness_values[candidates.get(i)];
+                group2 += fitness_values[candidates.get(nr_candidates/2+i)];
+            }
+
+            // compute NF
+            double NF = ( Math.abs(group1 - group2) ) /
+                    ( Math.abs(group1) + Math.abs(group2) );
+
+            return NF;
+        }
+    }
 
 
-    private double[][] get_mutant_vector(double[][] pop){ // Efi
+    private double[][] get_mutant_vector(double[][] pop, double[] fitness_values, int evals){ // Efi
         // function to create a new mutant population based on pop
         // result dims should be [POP_SIZE][PHENOTYPE_DIM]
-
         // create placeholder for population
-        double[][] mutants = new double[POP_SIZE][PHENOTYPE_DIM];
+    	double[][] mutants = new double[POP_SIZE][PHENOTYPE_DIM];
+        
+        // Only initialize best once
+        // Initialization of variables
+        int indexIndividual1 = 0;
+        double[] individual1 = pop[indexIndividual1];
+        if(BASE_VECTOR == "best") {
+        	int best = 0;
+        	for (int i = 1; i < POP_SIZE; i++){
+        	    if ( fitness_values[i] > fitness_values[best] ) {
+        	  	  best = i;
+        	    }
+        	}
+        	indexIndividual1 = best;
+        	individual1 = pop[indexIndividual1];
+        }
 
-        // pick 3 invividuals from the population  P[i1],P[i2],P[i3]
-        // where i1!= i2 != i3
-        int a,b,c;
-
+    	// MAIN LOOP: create all mutants 
         for(int j = 0; j < POP_SIZE; j++){
-            a = rnd_.nextInt(POP_SIZE);
+        	
+        	// Random base vectors
+        	if(BASE_VECTOR == "rand") {
+                indexIndividual1 = rnd_.nextInt(POP_SIZE);  
+    	        individual1 = pop[indexIndividual1];
+            }
+	        // perturbation candidates
+	        Set<Integer> candidates = new HashSet<Integer>();
+	        for(int i = 0; i < (2*NR_PERTURBATION_VECTORS); i++) {
+	        	int setLength = candidates.size();
+	        	do{
+	                int randomCandidateIndex = rnd_.nextInt(POP_SIZE);
+	                if(randomCandidateIndex != indexIndividual1){
+	                	candidates.add(randomCandidateIndex);
+	                }
+	            }while(candidates.size()==setLength);
+	        }
+
             
-            do{
-                b = rnd_.nextInt(POP_SIZE);
-            }while(b==a);
-            do{
-                c = rnd_.nextInt(POP_SIZE);
-            }while(c == a || c == b);
-
-            // create three agent individuals
-            double[] individual1 = pop[a];
-            double[] individual2 = pop[b];
-            double[] individual3 = pop[c];
-
-
-            double[] fitness_scores = eval_pop(pop);
-            //System.out.println(Math.abs(fitness_scores[b]));
-
-            double NF = new_mutation_factor(fitness_scores[b], fitness_scores[c]);
+	       
+	        List<Integer> randomCandidateList = new ArrayList<Integer>(candidates);
+			double NF = new_mutation_factor(randomCandidateList, fitness_values, evals);
             System.out.println(NF);
-
-            // mutation process
-            // create difference vector based on NR_PERTURBATION_VECTORS
-            for(int n = 0; n < PHENOTYPE_DIM; n++){
-                mutants[j][n] = (individual1[n] + NF
-                        * (individual2[n] - individual3[n]));
+            double[] difference = pop[randomCandidateList.get(0)].clone();
+	        for(int n = 0; n < PHENOTYPE_DIM; n++){
+	        	for(int i=1; i<randomCandidateList.size(); i++){
+	    			if(i < (randomCandidateList.size()/2)){
+	    				difference[n] += pop[randomCandidateList.get(i)][n];
+	    			}else{
+	    				difference[n] -= pop[randomCandidateList.get(i)][n];
+	    			}
+	    		}
+                mutants[j][n] = Math.max(Math.min((individual1[n] + NF * difference[n]),5),-5);
             }
         }
         // Sample base vector based on BASE_VECTOR 
+
         return mutants;
     }
 
@@ -204,22 +245,27 @@ public class DifferentialEvolution implements ContestSubmission
     	double[] child = new double[PHENOTYPE_DIM];
     	int R = rnd_.nextInt(PHENOTYPE_DIM); //index on which at least crossover is applied
     	
-    	for (int i = 0; i < PHENOTYPE_DIM; i++) {
-    		double r_i = rnd_.nextDouble();
-    		if(r_i < CROSSOVER_PROB || i == R){
+    	if(CROSSOVER_SCHEME=="bin") {
+	    	for (int i = 0; i < PHENOTYPE_DIM; i++) {
+	    		double r_i = rnd_.nextDouble();
+	    		if(r_i < CROSSOVER_PROB || i == R){
+	    			child[i] = parent2[i];
+	    		}else{
+	    			child[i] = parent1[i];
+	    		}
+	        }
+    	} else if(CROSSOVER_SCHEME=="exp") {
+    		int i = 0;
+    		while(rnd_.nextDouble()<CROSSOVER_PROB && i < PHENOTYPE_DIM) {
     			child[i] = parent2[i];
-    		}else{
-    			child[i] = parent1[i];
+    			i++;
     		}
-        }
+    		for (int j = i; i < PHENOTYPE_DIM; i++) {
+    			child[j] = parent1[j];
+    		}
+    		child[R] = parent2[R];
+    	}
         return child;
-    }
-
-   private double new_mutation_factor(double fitness2, double fitness3) {
-       // Function to calculate the self-adaptive scaling factor
-        double NF = ( Math.abs(fitness2) - Math.abs(fitness3) ) /
-                ( Math.abs(fitness2) + Math.abs(fitness3) );
-        return NF;
     }
 
     private List<? extends Object> survival_selection(double[][] parents, double[] parents_fitness, double[][] children){ // Niels
@@ -253,8 +299,12 @@ public class DifferentialEvolution implements ContestSubmission
         double[] fitness_scores = eval_pop(pop);
         while(evals<evaluations_limit_){
 
+            //decreasing scaling factor
+            //for (int i = 0; i < PHENOTYPE_DIM; i++) {
+            //SCALING_FACTOR = SCALING_FACTOR[i]*0.999;
+            //}
+
             diversity = getDiversity(fitness_scores);
-            //System.out.println(String.valueOf(diversity));
             // Select parents
             // Apply crossover / mutation operators
         	double[][] mutant_pop =  get_mutant_vector(pop, fitness_scores, evals);
