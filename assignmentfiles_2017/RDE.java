@@ -59,13 +59,16 @@ public class RDE implements ContestSubmission
 
     // Changeable params
 	public int POP_SIZE = 101;
-	public double SCALING_FACTOR = 0.466853463430979;
-	public double CROSSOVER_PROB = 0.7200923758272062;
+	public double SCALING_FACTOR = 0.5;
+	public double[] SCALING_FACTOR_MULTI = {0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5};
+    public double CROSSOVER_PROB = 0.7200923758272062;
+
 
     // Params for DE operators (different versions of algorithm)
 	public int NR_PERTURBATION_VECTORS = 2;
 	public String BASE_VECTOR = "rand";
 	public String CROSSOVER_SCHEME = "bin";
+	public String SCALING_FACTOR_SCHEME = "1d"; // multi or 1d
 
 
     // HELPER FUNCTIONS FOR MAIN
@@ -192,8 +195,15 @@ public class RDE implements ContestSubmission
 	    				difference[n] -= pop[randomCandidateList.get(i)][n];
 	    			}
 	    		}
-                mutants[j][n] = Math.max(Math.min((individual1[n] + SCALING_FACTOR * difference[n]),5),-5);
-            }
+	    		if(SCALING_FACTOR_SCHEME == "multi"){
+                    mutants[j][n] = Math.max(Math.min((individual1[n] + SCALING_FACTOR_MULTI[n] * difference[n]), 5), -5);
+                }else{
+                    mutants[j][n] = Math.max(Math.min((individual1[n] + SCALING_FACTOR * difference[n]), 5), -5);
+
+                }
+
+	        }
+
         }
         // Sample base vector based on BASE_VECTOR 
 
@@ -263,6 +273,11 @@ public class RDE implements ContestSubmission
     // MAIN FUNCTION
 	public void run()
 	{
+        System.out.println("CROSSOVER_SCHEME:");
+        System.out.println(CROSSOVER_SCHEME);
+        System.out.println("SCALING_FACTOR_SCHEME:");
+        System.out.println(SCALING_FACTOR_SCHEME);
+
         int evals = POP_SIZE;
         // init population
         double[][] pop = init_population(POP_SIZE, PHENOTYPE_DIM);
@@ -291,6 +306,7 @@ public class RDE implements ContestSubmission
 	}
 	
 	public void main(String[] argv){
-    	run();
+
+        run();
     }
 }
