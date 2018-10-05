@@ -127,19 +127,33 @@ public class RDE implements ContestSubmission
        }
        return minFitIndex;
    }
+   
 
-   // Diversity
    public double getDiversity(double[][] pop, double[] fitness_values){
+
+        // Computes the standard deviation (sd) in every dimension
+        // diversity is equal to the sum of the sds
+
        double diversity = 0.0;
 
-       // Manhattan distance of the fittest, least fit of the current population
-       double fittest[] = pop[getFittest(fitness_values)];
-       double least_fittest[] = pop[getLeastFittest(fitness_values)];
+       double standardDeviation=0.0;
+       double sum = 0.0;
 
        for (int i = 0; i < PHENOTYPE_DIM; i++) {
-           diversity += Math.abs(fittest[i] - least_fittest[i]);
-       }
+           sum=0.0;
+           standardDeviation=0.0;
 
+           for (int n = 0; n < POP_SIZE; n++) {
+               sum += pop[n][i];
+           }
+           double mean = sum/POP_SIZE;
+
+           for(int n = 0; n < POP_SIZE; n++) {
+               standardDeviation += Math.pow(pop[n][i] - mean, 2);
+           }
+           standardDeviation = standardDeviation/POP_SIZE;
+       }
+       diversity += standardDeviation;
        return diversity;
 
    }
@@ -293,9 +307,8 @@ public class RDE implements ContestSubmission
             //}
 
             diversity = getDiversity(pop, fitness_scores);
-            //System.out.println(fitness_scores[getFittest(fitness_scores)]);
 
-            //System.out.println(diversity);
+            System.out.println(diversity);
 
             // Select parents
             // Apply crossover / mutation operators
