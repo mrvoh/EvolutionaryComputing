@@ -101,9 +101,8 @@ public class RDE implements ContestSubmission
         return fitness_values;
     }
 
-
     //Get the fittest individual
-   public double getFittest(double[] fitness_values) {
+   public int getFittest(double[] fitness_values) {
        double maxFit = Double.MIN_VALUE;
        int maxFitIndex = 0;
        for (int i = 0; i < POP_SIZE; i++) {
@@ -112,11 +111,11 @@ public class RDE implements ContestSubmission
                maxFitIndex = i;
            }
        }
-       return maxFit;
+       return maxFitIndex;
    }
 
    //Get least fit individual
-   public double getLeastFittest(double[] fitness_values) {
+   public int getLeastFittest(double[] fitness_values) {
        double minFitVal = Double.MAX_VALUE;
        int minFitIndex = 0;
        for (int i = 0; i < POP_SIZE; i++) {
@@ -126,19 +125,21 @@ public class RDE implements ContestSubmission
            }
 
        }
-       return minFitVal;
+       return minFitIndex;
    }
 
    // Diversity
-   public double getDiversity(double[] fitness_values){
-       double diversity;
-       double fittest;
-       double least_fittest;
+   public double getDiversity(double[][] pop, double[] fitness_values){
+       double diversity = 0.0;
 
-       // For now: max fitness -  min fitness
-       fittest = getFittest(fitness_values);
-       least_fittest = getLeastFittest(fitness_values);
-       diversity = fittest-least_fittest;
+       // Manhattan distance of the fittest, least fit of the current population
+       double fittest[] = pop[getFittest(fitness_values)];
+       double least_fittest[] = pop[getLeastFittest(fitness_values)];
+
+       for (int i = 0; i < PHENOTYPE_DIM; i++) {
+           diversity += Math.abs(fittest[i] - least_fittest[i]);
+       }
+
        return diversity;
 
    }
@@ -291,7 +292,11 @@ public class RDE implements ContestSubmission
             //SCALING_FACTOR = SCALING_FACTOR[i]*0.999;
             //}
 
-            diversity = getDiversity(fitness_scores);
+            diversity = getDiversity(pop, fitness_scores);
+            //System.out.println(fitness_scores[getFittest(fitness_scores)]);
+
+            //System.out.println(diversity);
+
             // Select parents
             // Apply crossover / mutation operators
         	double[][] mutant_pop =  get_mutant_vector(pop, fitness_scores);
@@ -306,7 +311,6 @@ public class RDE implements ContestSubmission
 	}
 	
 	public void main(String[] argv){
-
         run();
     }
 }
