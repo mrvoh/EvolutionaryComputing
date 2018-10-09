@@ -9,7 +9,7 @@ from subprocess import PIPE
 
 class Optimizer:
 
-    def __init__(self, optimization_folder, nr_iterations, iteration_chunck_size, nr_init_points, nr_folds, algo_name, obj_fun):
+    def __init__(self, optimization_folder, nr_iterations, iteration_chunck_size, nr_init_points, nr_folds, algo_name, obj_fun, multidim):
 
         # Set static variables
         self.INTERMEDIATE_RESULTS_FOLDER = optimization_folder
@@ -21,6 +21,8 @@ class Optimizer:
 
         self.OBJ_FUN = obj_fun
         self.ALGO_NAME = algo_name
+
+        self.MULTIDIM = multidim
 
 
 
@@ -43,6 +45,11 @@ class Optimizer:
             'crossover_scheme':[1,0,0] # binomial / exponential
         }
 
+        if multidim:
+            for i in range(0,10):
+                self.param_boundaries['a{}'.format(i)] = (0.1,1.0)
+                self.explore_points['a{}'.format(i)] = [0.1, 0.5, 0.9]
+
 
 
         self.bo = BayesianOptimization(self._eval_fun, self.param_boundaries)
@@ -51,7 +58,7 @@ class Optimizer:
     # Helper functions
     ######################################################
 
-    def _change_params(self, filename, pop_size = 50, scaling_factor = 0.1, crossover_prob = 0.2, nr_perturbation_vectors = 1, base_vector = '"random1"', crossover_scheme='"bin1"'):
+    def _change_params(self, filename, pop_size = 50, scaling_factor = 0.1, crossover_prob = 0.2, nr_perturbation_vectors = 1, base_vector = '"random1"', crossover_scheme='"bin1"', F= [0.5]):
 
 
         vals = [pop_size, scaling_factor, crossover_prob, nr_perturbation_vectors, base_vector, crossover_scheme]
@@ -61,6 +68,11 @@ class Optimizer:
             param_decl = ['public int POP_SIZE','public double SCALING_FACTOR','public double CROSSOVER_PROB',  
                             'public int NR_PERTURBATION_VECTORS',
                             'public String BASE_VECTOR', 'public String CROSSOVER_SCHEME']
+
+            if self.MULTIDIM:
+                param_decl.append('public double[] SCALING_FACTOR_MULTI')
+                java_arr = str(F).replace('[','{').replace(']','}')
+                vals.append(java_arr+';')
 
             param_val = list(zip(param_decl, vals))
             for line in f.readlines():
@@ -91,9 +103,10 @@ class Optimizer:
         params['crossover_scheme'] = '"bin"' if params['crossover_scheme'] > 0.5 else '"exp"'
 
 
+
         return params
 
-    def _eval_fun(self, pop_size, scaling_factor, crossover_prob, nr_perturbation_vectors, base_vector, crossover_scheme):
+    def _eval_fun(self, pop_size, scaling_factor, crossover_prob, nr_perturbation_vectors, base_vector, crossover_scheme, a0=0, a1=0, a2=0, a3=0, a4=0, a5=0,a6=0,a7=0,a8=0,a9=0):
 
         
         #TODO: Include default settings
@@ -107,6 +120,9 @@ class Optimizer:
             'crossover_scheme':crossover_scheme # binomial / exponential
         }
 
+        if self.MULTIDIM:
+            params['F'] = [a0,a1,a2,a3,a4,a5,a6,a7,a8,a9]
+            # params['F'] = 
         params = self._cast_params(params)
 
         score = 0
@@ -190,7 +206,7 @@ class Optimizer:
         self.bo.points_to_csv(filepath)
 
 
-Opt = Optimizer('optimizer_results', 250, 25, 25, 5, 'DENF.java', 'KatsuuraEvaluation')
+Opt = Optimizer('optimizer_results', 250, 25, 25, 5, 'SADE.java', 'BentCigarFunction',multidim = False)
 
 # Reinitialize from *.csv file in case of interruption. IMPORTANT: also disable line line "self.bo.explore(self.explore_points)"
 #Opt.init_csv('optimizer_results/0-intermediate.csv')

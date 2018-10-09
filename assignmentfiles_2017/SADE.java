@@ -58,16 +58,16 @@ public class SADE implements ContestSubmission
     public int DIM_UPPER_BOUND = 5;
 
     // Changeable params
-	public int POP_SIZE = 100;
-	public double SCALING_FACTOR = 1.0;
+	public int POP_SIZE = 46;
+	public double SCALING_FACTOR = 0.12706881331494213;
 	//public double[] SCALING_FACTOR_MULTI = {0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5};
-    public double CROSSOVER_PROB = 0.5;
+	public double CROSSOVER_PROB = 0.27737229097797367;
 
 
     // Params for DE operators (different versions of algorithm)
-	public int NR_PERTURBATION_VECTORS = 2;
-	public String BASE_VECTOR = "best";
-	public String CROSSOVER_SCHEME = "bin";
+	public int NR_PERTURBATION_VECTORS = 3;
+	public String BASE_VECTOR = "rand";
+	public String CROSSOVER_SCHEME = "exp";
 	//public String SCALING_FACTOR_SCHEME = "multi"; // multi or 1d
 
 

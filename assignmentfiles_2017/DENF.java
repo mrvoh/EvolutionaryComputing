@@ -58,14 +58,14 @@ public class DENF implements ContestSubmission
     public int DIM_UPPER_BOUND = 5;
 
     // Changeable params
-	public int POP_SIZE = 143;
-	public double SCALING_FACTOR = 0.2099014640193858;
-	public double CROSSOVER_PROB = 0.7674425457585058;
+	public int POP_SIZE = 401;
+	public double SCALING_FACTOR = 0.8860673733394567;
+	public double CROSSOVER_PROB = 0.45551091445214364;
 
     // Params for DE operators (different versions of algorithm)
 	public int NR_PERTURBATION_VECTORS = 2;
 	public String BASE_VECTOR = "best";
-	public String CROSSOVER_SCHEME = "exp";
+	public String CROSSOVER_SCHEME = "bin";
 
 
     // HELPER FUNCTIONS FOR MAIN

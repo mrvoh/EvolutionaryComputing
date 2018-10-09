@@ -58,15 +58,15 @@ public class RDE implements ContestSubmission
     public int DIM_UPPER_BOUND = 5;
 
     // Changeable params
-	public int POP_SIZE = 101;
-	public double SCALING_FACTOR = 0.5;
-	public double[] SCALING_FACTOR_MULTI = {0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5};
-    public double CROSSOVER_PROB = 0.7200923758272062;
+	public int POP_SIZE = 436;
+	public double SCALING_FACTOR = 0.5093871181533348;
+	public double[] SCALING_FACTOR_MULTI = {0.5408046795771152, 0.4219945470301434, 0.7753240368958969, 0.6733393368971906, 0.6145602302392768, 0.7439653253971696, 0.9869243634444764, 0.7379935518387933, 0.8946197923133716, 0.9135980974975875};;
+	public double CROSSOVER_PROB = 0.9793834332792729;
 
 
     // Params for DE operators (different versions of algorithm)
 	public int NR_PERTURBATION_VECTORS = 2;
-	public String BASE_VECTOR = "rand";
+	public String BASE_VECTOR = "best";
 	public String CROSSOVER_SCHEME = "bin";
 	public String SCALING_FACTOR_SCHEME = "1d"; // multi or 1d
 
