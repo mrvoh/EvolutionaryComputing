@@ -58,13 +58,13 @@ public class DENF implements ContestSubmission
     public int DIM_UPPER_BOUND = 5;
 
     // Changeable params
-	public int POP_SIZE = 401;
-	public double SCALING_FACTOR = 0.8860673733394567;
-	public double CROSSOVER_PROB = 0.45551091445214364;
+	public int POP_SIZE = 241;
+	public double SCALING_FACTOR = 0.15860938844837258;
+	public double CROSSOVER_PROB = 0.37555635842296986;
 
     // Params for DE operators (different versions of algorithm)
 	public int NR_PERTURBATION_VECTORS = 2;
-	public String BASE_VECTOR = "best";
+	public String BASE_VECTOR = "rand";
 	public String CROSSOVER_SCHEME = "bin";
 
 
@@ -220,7 +220,15 @@ public class DENF implements ContestSubmission
 	    				difference[n] -= pop[randomCandidateList.get(i)][n];
 	    			}
 	    		}
-                mutants[j][n] = Math.max(Math.min((individual1[n] + NF * difference[n]),5),-5);
+                double d = individual1[n] + SCALING_FACTOR * difference[n];
+                    if (d < -5.0){
+                        d = (-1.0*d)%5;
+                        d = -1.0*d;
+                    }
+                    if (d > 5){
+                        d = d % 5;
+                    }
+                    mutants[j][n] = d;
             }
         }
         // Sample base vector based on BASE_VECTOR 
