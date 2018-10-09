@@ -59,7 +59,7 @@ public class SADE implements ContestSubmission
 
     // Changeable params
 	public int POP_SIZE = 46;
-	public double SCALING_FACTOR = 0.12706881331494213;
+	public double SCALING_FACTOR = 0.9;
 	//public double[] SCALING_FACTOR_MULTI = {0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5};
 	public double CROSSOVER_PROB = 0.27737229097797367;
 
@@ -197,8 +197,16 @@ public class SADE implements ContestSubmission
 	    			difference[n] -= scaling_factors[candidates.get(i)][n];
 	    		}
 	    	}
-            
-            mf[n] = Math.max(Math.min(scaling_factors[base_indiv][n] + SCALING_FACTOR * difference[n],1.0),0.1);
+            double d = scaling_factors[base_indiv][n] + SCALING_FACTOR * difference[n];
+            if ( d < 0){
+                d = -1.0*d;
+            }
+            if(d > 1){
+                d = d % 1.0;
+            }
+
+            mf[n] = Math.max(Math.min(d,1.0),0.1);
+
 
         
         }
@@ -255,9 +263,13 @@ public class SADE implements ContestSubmission
 	        }
 
             List<Integer> randomCandidateList = new ArrayList<Integer>(candidates);
-            // compute mutant scaling factor
-            double[] mf = get_mutant_f(pop, indexIndividual1, randomCandidateList, scaling_factors, fitness_values, evals);
-            mutants_f[j] = mf;
+            double tau = rnd_.nextFloat();
+            double [] mf = scaling_factors[j].clone();
+            if(tau<0.1) {
+                mf = get_mutant_f(pop, indexIndividual1, randomCandidateList, scaling_factors, fitness_values, evals);
+            }
+
+            mutants_f[j] = mf.clone();
 
 
             // compute mutant input values
