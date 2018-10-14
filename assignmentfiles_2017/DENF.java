@@ -58,14 +58,18 @@ public class DENF implements ContestSubmission
     public int DIM_UPPER_BOUND = 5;
 
     // Changeable params
-	public int POP_SIZE = 241;
-	public double SCALING_FACTOR = 0.15860938844837258;
-	public double CROSSOVER_PROB = 0.37555635842296986;
+	public int POP_SIZE = 76;
+	public double SCALING_FACTOR = 0.3846483197653534;
+	public double CROSSOVER_PROB = 0.5210518174652843;
 
     // Params for DE operators (different versions of algorithm)
 	public int NR_PERTURBATION_VECTORS = 2;
 	public String BASE_VECTOR = "rand";
 	public String CROSSOVER_SCHEME = "bin";
+
+    // DENF operator
+	public double NF_THRESHOLD = 0.9;
+
 
 
     // HELPER FUNCTIONS FOR MAIN
@@ -141,7 +145,7 @@ public class DENF implements ContestSubmission
    }
    private double new_mutation_factor(List<Integer> candidates, double[] fitness_values,int evals) {
        // Function to calculate the self-adaptive scaling factor
-        if (evals + POP_SIZE <= (int)((double)evaluations_limit_*0.9)){
+        if (evals + POP_SIZE <= (int)((double)evaluations_limit_*NF_THRESHOLD)){
             // use static scaling factor for first 90% of runs
             return SCALING_FACTOR;
         }else{ // compute NF in last 10% of runs
