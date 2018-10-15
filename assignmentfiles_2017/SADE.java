@@ -58,16 +58,16 @@ public class SADE implements ContestSubmission
     public int DIM_UPPER_BOUND = 5;
 
     // Changeable params
-	public int POP_SIZE = 46;
-	public double SCALING_FACTOR = 0.9;
+	public int POP_SIZE = 297;
+	public double SCALING_FACTOR = 0.6491865373237091;
 	//public double[] SCALING_FACTOR_MULTI = {0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5};
-	public double CROSSOVER_PROB = 0.27737229097797367;
+	public double CROSSOVER_PROB = 0.40589407296746705;
 
 
     // Params for DE operators (different versions of algorithm)
-	public int NR_PERTURBATION_VECTORS = 3;
-	public String BASE_VECTOR = "rand";
-	public String CROSSOVER_SCHEME = "exp";
+	public int NR_PERTURBATION_VECTORS = 2;
+	public String BASE_VECTOR = "best";
+	public String CROSSOVER_SCHEME = "bin";
 	//public String SCALING_FACTOR_SCHEME = "multi"; // multi or 1d
 
 
@@ -159,7 +159,7 @@ public class SADE implements ContestSubmission
    }
       private double new_mutation_factor(List<Integer> candidates, double[] fitness_values,int evals) {
        // Function to calculate the self-adaptive scaling factor
-        if (evals + POP_SIZE <= (int)((double)evaluations_limit_*0.9)){
+        if (evals + POP_SIZE <= (int)((double)evaluations_limit_*10.0)){
             // use static scaling factor for first 90% of runs
             return SCALING_FACTOR;
         }else{ // compute NF in last 10% of runs
@@ -206,9 +206,6 @@ public class SADE implements ContestSubmission
             }
 
             mf[n] = Math.max(Math.min(d,1.0),0.1);
-
-
-        
         }
 
         return mf;
@@ -265,7 +262,8 @@ public class SADE implements ContestSubmission
             List<Integer> randomCandidateList = new ArrayList<Integer>(candidates);
             double tau = rnd_.nextFloat();
             double [] mf = scaling_factors[j].clone();
-            if(tau<0.1) {
+            
+            if(tau<0.1) { // evolve scaling factors
                 mf = get_mutant_f(pop, indexIndividual1, randomCandidateList, scaling_factors, fitness_values, evals);
             }
 
@@ -282,8 +280,17 @@ public class SADE implements ContestSubmission
 	    				difference[n] -= pop[randomCandidateList.get(i)][n];
 	    			}
 	    		}
-                mutants[j][n] = Math.max(Math.min((individual1[n] + mf[n] * difference[n]), 5), -5);
-
+                // rescale to [-5,5] if necessary
+                double d = individual1[n] + mf[n] * difference[n];
+                if (d < -5){
+                    d = -1.0*d;
+                    d = d % 5;
+                    d = -1.0*d;
+                }
+                if (d > 5){
+                    d = d % 5;
+                }
+                mutants[j][n] = d;
                 }
 
 	        }
@@ -380,8 +387,6 @@ public class SADE implements ContestSubmission
 
 
             diversity = getDiversity(pop, fitness_scores);
-
-            //System.out.println(diversity);
 
             // Select parents
             // Apply crossover / mutation operators

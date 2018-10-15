@@ -211,11 +211,30 @@ public class RDE implements ContestSubmission
 	    				difference[n] -= pop[randomCandidateList.get(i)][n];
 	    			}
 	    		}
+                 
+
 	    		if(SCALING_FACTOR_SCHEME == "multi"){
-                    mutants[j][n] = Math.max(Math.min((individual1[n] + SCALING_FACTOR_MULTI[n] * difference[n]), 5), -5);
+                    double d = individual1[n] + SCALING_FACTOR_MULTI[n] * difference[n];
+                    if (d < -5.0){
+                        d = (-1.0*d)%5;
+                        d = -1.0*d;
+                    }
+                    if (d > 5){
+                        d = d % 5;
+                    }
+                    mutants[j][n] = d;
                 }else{
-	    		    System.out.println("using 1d");
-                    mutants[j][n] = Math.max(Math.min((individual1[n] + SCALING_FACTOR * difference[n]), 5), -5);
+
+
+                    double d = individual1[n] + SCALING_FACTOR * difference[n];
+                    if (d < -5.0){
+                        d = (-1.0*d)%5;
+                        d = -1.0*d;
+                    }
+                    if (d > 5){
+                        d = d % 5;
+                    }
+                    mutants[j][n] = d;
 
                 }
 
