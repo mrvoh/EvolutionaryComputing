@@ -57,19 +57,18 @@ public class RDE implements ContestSubmission
     public int DIM_LOWER_BOUND = -5; // each dimension ranges from [-5, 5]
     public int DIM_UPPER_BOUND = 5;
 
-    // Bent Cigar
     // Changeable params
-	public int POP_SIZE = 91;
-	public double SCALING_FACTOR = 0.4963031846198602;
+	public int POP_SIZE = 101;
+	public double SCALING_FACTOR = 0.5;
+	public double[] SCALING_FACTOR_MULTI = {0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5};
+    public double CROSSOVER_PROB = 0.7200923758272062;
 
-	public double[] SCALING_FACTOR_MULTI = {0.8938261947162913, 0.8030083095172987, 0.14618535481353806, 0.38716614286906914, 0.4677970391114292, 0.7249020607895114, 0.45217743620249573, 0.996048934728194, 0.7626774551516734, 0.187266455557487};;
-	public double CROSSOVER_PROB = 0.4626133562363599;
 
     // Params for DE operators (different versions of algorithm)
-	public int NR_PERTURBATION_VECTORS = 1;
+	public int NR_PERTURBATION_VECTORS = 2;
 	public String BASE_VECTOR = "rand";
 	public String CROSSOVER_SCHEME = "bin";
-	public String SCALING_FACTOR_SCHEME = "multi"; // multi or 1d
+	public String SCALING_FACTOR_SCHEME = "1d"; // multi or 1d
 
 
     // HELPER FUNCTIONS FOR MAIN
@@ -128,7 +127,7 @@ public class RDE implements ContestSubmission
        }
        return minFitIndex;
    }
-   
+
 
    public double getDiversity(double[][] pop, double[] fitness_values){
 
@@ -214,7 +213,6 @@ public class RDE implements ContestSubmission
 	    		if(SCALING_FACTOR_SCHEME == "multi"){
                     mutants[j][n] = Math.max(Math.min((individual1[n] + SCALING_FACTOR_MULTI[n] * difference[n]), 5), -5);
                 }else{
-	    		    System.out.println("using 1d");
                     mutants[j][n] = Math.max(Math.min((individual1[n] + SCALING_FACTOR * difference[n]), 5), -5);
 
                 }
@@ -310,7 +308,7 @@ public class RDE implements ContestSubmission
 
             diversity = getDiversity(pop, fitness_scores);
 
-            //System.out.println(diversity);
+            System.out.println(diversity);
 
             // Select parents
             // Apply crossover / mutation operators
