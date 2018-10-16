@@ -58,16 +58,16 @@ public class SADE implements ContestSubmission
     public int DIM_UPPER_BOUND = 5;
 
     // Changeable params
-	public int POP_SIZE = 297;
-	public double SCALING_FACTOR = 0.6491865373237091;
+	public int POP_SIZE = 470;
+	public double SCALING_FACTOR = 0.99;
 	//public double[] SCALING_FACTOR_MULTI = {0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5};
-	public double CROSSOVER_PROB = 0.40589407296746705;
+	//public double CROSSOVER_PROB = 0.554386;
 
 
     // Params for DE operators (different versions of algorithm)
 	public int NR_PERTURBATION_VECTORS = 2;
-	public String BASE_VECTOR = "best";
-	public String CROSSOVER_SCHEME = "bin";
+	public String BASE_VECTOR = "rand";
+	public String CROSSOVER_SCHEME = "exp";
 	//public String SCALING_FACTOR_SCHEME = "multi"; // multi or 1d
 
 
@@ -86,6 +86,19 @@ public class SADE implements ContestSubmission
                 pheno[j] = l + (u - l) * rnd_.nextDouble();
                 }
             pop[i] = pheno;
+        }
+        return pop;
+    }
+
+    // HELPER FUNCTIONS FOR MAIN
+    private double[] init_population_1d(int pop_size, double l, double u){
+        // function to intialize a random population of size pop_size
+
+        double[] pop = new double[pop_size];
+
+        for(int i = 0; i < pop_size;i++){
+            // init phenotype
+            pop[i] = l + (u - l) * rnd_.nextDouble();
         }
         return pop;
     }
@@ -157,38 +170,16 @@ public class SADE implements ContestSubmission
        return diversity;
 
    }
-      private double new_mutation_factor(List<Integer> candidates, double[] fitness_values,int evals) {
-       // Function to calculate the self-adaptive scaling factor
-        if (evals + POP_SIZE <= (int)((double)evaluations_limit_*10.0)){
-            // use static scaling factor for first 90% of runs
-            return SCALING_FACTOR;
-        }else{ // compute NF in last 10% of runs
 
-            double group1 = 0;
-            double group2 = 0;
 
-            // compute scores for both sides of difference vector
-            int nr_candidates = candidates.size();
-            for(int i = 0; i < nr_candidates/2;i++){
-                group1 += fitness_values[candidates.get(i)];
-                group2 += fitness_values[candidates.get(nr_candidates/2+i)];
-            }
 
-            // compute NF
-            double NF = ( Math.abs(group1 - group2) ) /
-                    ( Math.abs(group1) + Math.abs(group2) );
-
-            return NF;
-        }
-    }
 
    private double[] get_mutant_f(double[][] pop, int base_indiv, List<Integer> candidates, double[][] scaling_factors, double[] fitness_values, int evals){
        
        // Initialize F and mutant scaling factor (mf)
-       double NF = new_mutation_factor(candidates, fitness_values, evals);
        double[] mf = new double[PHENOTYPE_DIM];
 
-       double[] difference = pop[candidates.get(0)].clone();
+       double[] difference = scaling_factors[candidates.get(0)].clone();
 	    for(int n = 0; n < PHENOTYPE_DIM; n++){
 	    	for(int i=1; i<candidates.size(); i++){
 	    		if(i < (candidates.size()/2)){
@@ -198,32 +189,56 @@ public class SADE implements ContestSubmission
 	    		}
 	    	}
             double d = scaling_factors[base_indiv][n] + SCALING_FACTOR * difference[n];
-            if ( d < 0){
-                d = -1.0*d;
-            }
-            if(d > 1){
-                d = d % 1.0;
-            }
 
-            mf[n] = Math.max(Math.min(d,1.0),0.1);
+            //mf[n] = Math.max(Math.min(d,1.0),0.0);
+            mf[n] = d;
         }
-
-        return mf;
-
-        
-
-
+       return mf;
 
    }
 
+    private double get_mutant_cr(double[][] pop, int base_indiv, List<Integer> candidates, double[] crossover_rates, double[] fitness_values, int evals){
 
-    private List<? extends Object> get_mutant_vector(double[][] pop, double[] fitness_values, double[][] scaling_factors, int evals){ // Efi
+        // Initialize F and mutant scaling factor (mf)
+        double cr;
+
+        double difference = crossover_rates[candidates.get(0)];
+            for(int i=1; i<candidates.size(); i++){
+
+                if(i < (candidates.size()/2)){
+                    difference += crossover_rates[candidates.get(i)];
+                }else{
+                    difference -= crossover_rates[candidates.get(i)];
+                }
+            }
+            double d = crossover_rates[base_indiv] + SCALING_FACTOR * difference;
+//            if ( d < 0){
+//                d = 0
+//            }
+            cr = Math.max(d,0.0);
+
+        return cr;
+
+    }
+
+
+    public void printArray(double[] anArray) {
+        for (int i = 0; i < anArray.length; i++) {
+            if (i > 0) {
+                System.out.print(", ");
+            }
+            System.out.print(anArray[i]);
+        }
+    }
+
+    private List<? extends Object> get_mutant_vector(double[][] pop, double[] fitness_values, double[][] scaling_factors, double[] crossover_rates, int evals){ // Efi
         // function to create a new mutant population based on pop
         // result dims should be [POP_SIZE][PHENOTYPE_DIM]
         // create placeholder for population
     	double[][] mutants = new double[POP_SIZE][PHENOTYPE_DIM];
         double[][] mutants_f = new double[POP_SIZE][PHENOTYPE_DIM];
-        
+        double[] mutants_cr = new double[POP_SIZE];
+
         // Only initialize best once
         // Initialization of variables
         int indexIndividual1 = 0;
@@ -262,12 +277,18 @@ public class SADE implements ContestSubmission
             List<Integer> randomCandidateList = new ArrayList<Integer>(candidates);
             double tau = rnd_.nextFloat();
             double [] mf = scaling_factors[j].clone();
-            
+            double cr = crossover_rates[j];
+
+
             if(tau<0.1) { // evolve scaling factors
                 mf = get_mutant_f(pop, indexIndividual1, randomCandidateList, scaling_factors, fitness_values, evals);
-            }
+                cr = get_mutant_cr(pop, indexIndividual1, randomCandidateList, crossover_rates, fitness_values, evals);
+                //printArray(mf);
 
+            }
             mutants_f[j] = mf.clone();
+            mutants_cr[j] = cr;
+
 
 
             // compute mutant input values
@@ -282,29 +303,30 @@ public class SADE implements ContestSubmission
 	    		}
                 // rescale to [-5,5] if necessary
                 double d = individual1[n] + mf[n] * difference[n];
-                if (d < -5){
-                    d = -1.0*d;
-                    d = d % 5;
-                    d = -1.0*d;
-                }
-                if (d > 5){
-                    d = d % 5;
-                }
+//                if (d < -5){
+//                    d = -1.0*d;
+//                    d = d % 5;
+//                    d = -1.0*d;
+//                }
+//                if (d > 5){
+//                    d = d % 5;
+//                }
                 mutants[j][n] = d;
                 }
 
 	        }
-            return Arrays.asList(mutants, mutants_f);
+            return Arrays.asList(mutants, mutants_f, mutants_cr);
         } 
 
-    private List<? extends Object> get_trial_vector(double[][] pop, double[][] scaling_factors, double[][] mutants, double[][] mutants_f){ // Hans
+    private List<? extends Object> get_trial_vector(double[][] pop, double[][] scaling_factors, double[][] mutants, double[][] mutants_f, double[] crossover_rates ){ // Hans
         // function to create the trial vectors T
         // apply crossover based on CROSSOVER_SCHEME
         // return T
 	    double[][] T = new double[POP_SIZE][PHENOTYPE_DIM];
         double[][] Tf = new double[POP_SIZE][PHENOTYPE_DIM];
-	    for(int i = 0; i < POP_SIZE; i++) {
-            List res = crossover(pop[i], scaling_factors[i], mutants[i], mutants_f[i]);
+
+        for(int i = 0; i < POP_SIZE; i++) {
+            List res = crossover(pop[i], scaling_factors[i], mutants[i], mutants_f[i],  crossover_rates[i]);
             T[i] = (double[])res.get(0);
             Tf[i] = (double[])res.get(1);
 	    }
@@ -312,7 +334,7 @@ public class SADE implements ContestSubmission
 	    return Arrays.asList(T,Tf);
     }
 
-    private List<? extends Object> crossover(double[] p1, double[] f1, double[] p2, double[] f2){
+    private List<? extends Object> crossover(double[] p1, double[] f1, double[] p2, double[] f2, double cr){
         // function to perform crossover between two parents, return new child
     	double[] child = new double[PHENOTYPE_DIM];
         double[] child_f = new double[PHENOTYPE_DIM];
@@ -321,9 +343,9 @@ public class SADE implements ContestSubmission
     	if(CROSSOVER_SCHEME=="bin") {
 	    	for (int i = 0; i < PHENOTYPE_DIM; i++) {
 	    		double r_i = rnd_.nextDouble();
-	    		if(r_i < CROSSOVER_PROB || i == R){
-	    			child[i] = p2[i];
-                    child_f[i] = f2[i];
+	    		if(r_i < cr || i == R){
+	    			child[i] = p2[i]; // apply crossover to population
+                    child_f[i] = f2[i]; // apply crossover to the scaling dactor
 	    		}else{
 	    			child[i] = p1[i];
                     child_f[i] = f1[i];
@@ -331,7 +353,7 @@ public class SADE implements ContestSubmission
 	        }
     	} else if(CROSSOVER_SCHEME=="exp") {
     		int i = 0;
-    		while(rnd_.nextDouble()<CROSSOVER_PROB && i < PHENOTYPE_DIM) {
+    		while(rnd_.nextDouble()<cr && i < PHENOTYPE_DIM) {
     			child[i] = p2[i];
                 child_f[i] = f2[i];
     			i++;
@@ -348,27 +370,39 @@ public class SADE implements ContestSubmission
         return Arrays.asList(child, child_f);
     }
 
-    private List<? extends Object> survival_selection(double[][] parents, double[][] parents_f, double[] parents_fitness, double[][] children, double [][] children_f){ // Niels
+    private List<? extends Object> survival_selection(double[][] parents, double[][] parents_f, double[] parents_cr,
+                                                      double[] parents_fitness, double[][] children,
+                                                      double [][] children_f, double[] children_cr){ // Niels
          // function to select new surivors based on fitness
         double[][] survivors = new double[POP_SIZE][PHENOTYPE_DIM];
         double[][] survivors_f = new double[POP_SIZE][PHENOTYPE_DIM];
+        double[] survivors_cr = new double[POP_SIZE];
         double[] survivor_fitness = new double[POP_SIZE];
         // evaluate children
         double[] child_fitness = eval_pop(children);
         // compare each parent to child and save fittest in new population
         for(int i = 0; i < parents_fitness.length; i++){
+            //System.out.println(parents_fitness[i]);
+            //System.out.println(child_fitness[i]);
+
             if(parents_fitness[i] > child_fitness[i]){
                 survivors[i] = parents[i].clone();
                 survivors_f[i] = parents_f[i].clone();
+                survivors_cr[i] = parents_cr[i];
                 survivor_fitness[i] = parents_fitness[i];
             }else{
                 survivors[i] = children[i].clone();
                 survivors_f[i] = children_f[i].clone();
+                survivors_cr[i] = children_cr[i];
                 survivor_fitness[i] = child_fitness[i];
             }
+            //System.out.println(survivors_f[1][9]);
+            //System.out.println(survivors[1][9]);
+
+
         }
         // return list of objects, to be converted back outside function
-        return Arrays.asList(survivors, survivor_fitness, survivors_f);
+        return Arrays.asList(survivors, survivor_fitness, survivors_f, survivors_cr);
     }
 
     // MAIN FUNCTION
@@ -379,6 +413,7 @@ public class SADE implements ContestSubmission
         // init population
         double[][] pop = init_population(POP_SIZE, PHENOTYPE_DIM, DIM_LOWER_BOUND, DIM_UPPER_BOUND);
         double[][] scaling_factors = init_population(POP_SIZE, PHENOTYPE_DIM, 0.5,1.0);
+        double[] crossover_rates = init_population_1d(POP_SIZE, 0.0,1.0);
 
         double diversity;
         // calculate fitness
@@ -386,23 +421,32 @@ public class SADE implements ContestSubmission
         while(evals<evaluations_limit_){
 
 
+            System.out.println(fitness_scores[getFittest(fitness_scores)]);
             diversity = getDiversity(pop, fitness_scores);
 
             // Select parents
             // Apply crossover / mutation operators
-            List m = get_mutant_vector(pop, fitness_scores, scaling_factors, evals);
+            List m = get_mutant_vector(pop, fitness_scores, scaling_factors, crossover_rates, evals);
         	double[][] mutant_pop = (double[][])m.get(0);
             double[][] mutants_f = (double[][])m.get(1);
-            
+            double[] mutants_cr = (double[])m.get(2);
 
-            List T = get_trial_vector(pop, scaling_factors, mutant_pop, mutants_f);
+
+            List T = get_trial_vector(pop, scaling_factors, mutant_pop, mutants_f , mutants_cr);
             double[][] trial_pop = (double[][])T.get(0);
             double[][] trial_f = (double[][])T.get(1);
-        	// Selection
-        	List res = survival_selection(pop, scaling_factors, fitness_scores, trial_pop, trial_f);
+            //double[][] trial_cr = (double[][])T.get(2);
+
+            // Selection
+        	List res = survival_selection(pop, scaling_factors, crossover_rates, fitness_scores, trial_pop, trial_f, mutants_cr);
         	pop = (double[][])res.get(0);
         	fitness_scores = (double[])res.get(1);
             scaling_factors = (double[][])res.get(2);
+            crossover_rates = (double[])res.get(3);
+
+            //printArray(crossover_rates[j]);
+
+
         	evals += POP_SIZE;
 
         }
