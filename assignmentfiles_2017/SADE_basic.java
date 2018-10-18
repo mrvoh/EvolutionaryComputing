@@ -58,16 +58,16 @@ public class SADE_basic implements ContestSubmission
     public int DIM_UPPER_BOUND = 5;
 
     // Changeable params
-    public int POP_SIZE = 91;
-    public double SCALING_FACTOR = 0.292665;
+	public int POP_SIZE = 313;
+	public double SCALING_FACTOR = 0.6170124706444252;
     //public double[] SCALING_FACTOR_MULTI = {0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5};
-    public double CROSSOVER_PROB = 0.016029;
+	public double CROSSOVER_PROB = 0.9377236940855606;
 
 
     // Params for DE operators (different versions of algorithm)
-    public int NR_PERTURBATION_VECTORS = 2;
-    public String BASE_VECTOR = "rand";
-    public String CROSSOVER_SCHEME = "bin";
+	public int NR_PERTURBATION_VECTORS = 1;
+	public String BASE_VECTOR = "rand";
+	public String CROSSOVER_SCHEME = "exp";
     //public String SCALING_FACTOR_SCHEME = "multi"; // multi or 1d
 
 
@@ -188,7 +188,7 @@ public class SADE_basic implements ContestSubmission
         double NF = new_mutation_factor(candidates, fitness_values, evals);
         double[] mf = new double[PHENOTYPE_DIM];
 
-        double[] difference = pop[candidates.get(0)].clone();
+        double[] difference = scaling_factors[candidates.get(0)].clone();
         for(int n = 0; n < PHENOTYPE_DIM; n++){
             for(int i=1; i<candidates.size(); i++){
                 if(i < (candidates.size()/2)){
@@ -263,9 +263,9 @@ public class SADE_basic implements ContestSubmission
             double tau = rnd_.nextFloat();
             double [] mf = scaling_factors[j].clone();
 
-            if(tau<0.1) { // evolve scaling factors
-                mf = get_mutant_f(pop, indexIndividual1, randomCandidateList, scaling_factors, fitness_values, evals);
-            }
+            // if(tau<0.1) { // evolve scaling factors
+            mf = get_mutant_f(pop, indexIndividual1, randomCandidateList, scaling_factors, fitness_values, evals);
+            // }
 
             mutants_f[j] = mf.clone();
 

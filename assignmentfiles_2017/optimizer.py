@@ -206,7 +206,7 @@ class Optimizer:
         self.bo.points_to_csv(filepath)
 
 
-Opt = Optimizer('optimizer_results', 250, 25, 25, 5, 'SADE.java', 'BentCigarFunction',multidim = False)
+Opt = Optimizer('optimizer_results', 250, 250, 50, 5, 'SADE_basic.java', 'KatsuuraEvaluation',multidim = False)
 
 # Reinitialize from *.csv file in case of interruption. IMPORTANT: also disable line line "self.bo.explore(self.explore_points)"
 #Opt.init_csv('optimizer_results/0-intermediate.csv')
