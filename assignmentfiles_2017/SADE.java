@@ -58,8 +58,8 @@ public class SADE implements ContestSubmission
     public int DIM_UPPER_BOUND = 5;
 
     // Changeable params
-	public int POP_SIZE = 470;
-	public double SCALING_FACTOR = 0.99;
+	public int POP_SIZE = 466;
+	public double SCALING_FACTOR = 0.56059;
 	//public double[] SCALING_FACTOR_MULTI = {0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5};
 	//public double CROSSOVER_PROB = 0.554386;
 
@@ -421,8 +421,9 @@ public class SADE implements ContestSubmission
         while(evals<evaluations_limit_){
 
 
-            System.out.println(fitness_scores[getFittest(fitness_scores)]);
+            //System.out.println(fitness_scores[getFittest(fitness_scores)]);
             diversity = getDiversity(pop, fitness_scores);
+            System.out.println(diversity);
 
             // Select parents
             // Apply crossover / mutation operators
