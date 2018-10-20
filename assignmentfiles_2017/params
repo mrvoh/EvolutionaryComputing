@@ -1,0 +1,140 @@
+// RDE MULTI
+// 1. Bent Cigar
+// Changeable params
+public int POP_SIZE = 25;
+public double SCALING_FACTOR = 0.990304373737201704;
+public double CROSSOVER_PROB = 0.6837365722674385582;
+public double[] SCALING_FACTOR_MULTI = {0.5014863966642708, 0.4996066146489945, 0.20610712301749548, 0.581495585654958, 0.5713617520801301, 0.1655909294521239, 0.5879999728136714, 0.5890021826494911, 0.6613249548993547, 0.1807599323625348};;
+// Params for DE operators (different versions of algorithm)
+public int NR_PERTURBATION_VECTORS = 1;
+public String BASE_VECTOR = "rand";
+public String CROSSOVER_SCHEME = "exp";
+public String SCALING_FACTOR_SCHEME = "multi"; // multi or 1d
+
+
+
+// 2. Schaffers multi optimized
+public int POP_SIZE = 127;
+public double SCALING_FACTOR = 0.962638;
+public double[] SCALING_FACTOR_MULTI = {0.35295, 0.472046, 0.605105,0.525269,0.229262,0.209404	,0.546499,0.543815, 0.586237, 0.196023};
+public double CROSSOVER_PROB = 0.919721;
+// Params for DE operators (different versions of algorithm)
+public int NR_PERTURBATION_VECTORS = 1;
+public String BASE_VECTOR = "rand";
+public String CROSSOVER_SCHEME = "exp";
+public String SCALING_FACTOR_SCHEME = "multi"; // multi or 1d
+
+
+
+// 3. Katsuura multi optimized
+// Changeable params
+public int POP_SIZE = 429;
+public double SCALING_FACTOR = 0.127557;
+
+public double[] SCALING_FACTOR_MULTI = { 0.833264, 0.496058, 0.612686, 0.658067, 0.434344, 0.307815, 0.702332, 0.806728, 0.191972,0.680985};
+public double CROSSOVER_PROB = 0.641903;
+
+// Params for DE operators (different versions of algorithm)
+public int NR_PERTURBATION_VECTORS = 2;
+public String BASE_VECTOR = "rand";
+public String CROSSOVER_SCHEME = "exp";
+public String SCALING_FACTOR_SCHEME = "multi"; // multi or 1d
+
+
+
+
+
+
+// RDE - 1d
+// BentCigar, also works for Schaffers
+// Changeable params
+public int POP_SIZE = 91;
+public double SCALING_FACTOR = 0.4963031846198602;
+public double[] SCALING_FACTOR_MULTI = {0.8938261947162913, 0.8030083095172987, 0.14618535481353806, 0.38716614286906914, 0.4677970391114292, 0.7249020607895114, 0.45217743620249573, 0.996048934728194, 0.7626774551516734, 0.187266455557487};;
+public double CROSSOVER_PROB = 0.4626133562363599;
+
+// Params for DE operators (different versions of algorithm)
+public int NR_PERTURBATION_VECTORS = 1;
+public String BASE_VECTOR = "rand";
+public String CROSSOVER_SCHEME = "bin";
+public String SCALING_FACTOR_SCHEME = "1d"; // multi or 1d
+
+
+
+
+
+//SADE SCHAFFERS
+
+public int POP_SIZE = 61;
+public double SCALING_FACTOR = 0.133085;
+//public double[] SCALING_FACTOR_MULTI = {0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5};
+public double CROSSOVER_PROB = 0.624546;
+// Params for DE operators (different versions of algorithm)
+public int NR_PERTURBATION_VECTORS = 1;
+public String BASE_VECTOR = "best";
+
+
+
+//SADE_basic
+
+//1. bentcigar
+// Static for assignment
+public int PHENOTYPE_DIM = 10; // each phenotype has 10 dimensions in our assignment
+public int DIM_LOWER_BOUND = -5; // each dimension ranges from [-5, 5]
+public int DIM_UPPER_BOUND = 5;
+
+// Changeable params
+public int POP_SIZE = 150;
+public double SCALING_FACTOR = 0.709677360200658;
+//public double[] SCALING_FACTOR_MULTI = {0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5};
+public double CROSSOVER_PROB = 0.342448000107448;
+
+
+// Params for DE operators (different versions of algorithm)
+public int NR_PERTURBATION_VECTORS = 1;
+public String BASE_VECTOR = "best";
+public String CROSSOVER_SCHEME = "bin";
+//public String SCALING_FACTOR_SCHEME = "multi"; // multi or 1d
+
+
+//2. Schaffers
+
+// Static for assignment
+public int PHENOTYPE_DIM = 10; // each phenotype has 10 dimensions in our assignment
+public int DIM_LOWER_BOUND = -5; // each dimension ranges from [-5, 5]
+public int DIM_UPPER_BOUND = 5;
+
+// Changeable params
+public int POP_SIZE = 104;
+public double SCALING_FACTOR = 0.532932569020762;
+//public double[] SCALING_FACTOR_MULTI = {0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5};
+public double CROSSOVER_PROB = 100;
+
+
+// Params for DE operators (different versions of algorithm)
+public int NR_PERTURBATION_VECTORS = 1;
+public String BASE_VECTOR = "rand";
+public String CROSSOVER_SCHEME = "bin";
+//public String SCALING_FACTOR_SCHEME = "multi"; // multi or 1d
+
+
+
+
+//3. KATSUURA
+// Changeable params
+public int POP_SIZE = 314;
+public double SCALING_FACTOR = 0.735467290199321;
+//public double[] SCALING_FACTOR_MULTI = {0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5};
+public double CROSSOVER_PROB = 0.915281284719157;
+
+
+// Params for DE operators (different versions of algorithm)
+public int NR_PERTURBATION_VECTORS = 1;
+public String BASE_VECTOR = "rand";
+public String CROSSOVER_SCHEME = "exp";
+//public String SCALING_FACTOR_SCHEME = "multi"; // multi or 1d
+
+
+
+
+
